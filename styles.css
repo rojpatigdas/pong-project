@@ -1,43 +1,40 @@
-body {
-    margin: 0;
+body { 
+    margin: 0; 
+    overflow: hidden; 
+    background: #000; 
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #000;
+    min-height: 100vh;
 }
 
-.game-container {
-    position: relative;
-    width: 800px;
-    height: 400px;
-    background-color: #000;
-    border: 2px solid #fff;
+#game-container { 
+    width: 800px; 
+    height: 400px; 
+    position: relative; 
+    border: 2px solid white;
+}
+
+.paddle, #ball {
+    position: absolute;
+    background: white;
 }
 
 .paddle {
-    position: absolute;
     width: 10px;
     height: 80px;
-    background-color: #fff;
 }
 
 #paddle-left {
     left: 10px;
-    top: 160px;
 }
 
 #paddle-right {
     right: 10px;
-    top: 160px;
 }
 
-.ball {
-    position: absolute;
+#ball {
     width: 10px;
     height: 10px;
-    background-color: #fff;
     border-radius: 50%;
-    top: 195px;
-    left: 395px;
 }

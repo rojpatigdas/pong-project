@@ -1,6 +1,8 @@
-const paddleLeft = document.getElementById('paddle-left');
-const paddleRight = document.getElementById('paddle-right');
-const ball = document.getElementById('ball');
+// DOM elements
+const $paddleLeft = $('#paddle-left');
+const $paddleRight = $('#paddle-right');
+const $ball = $('#ball');
+const $gameContainer = $('#game-container');
 
 // Game state
 let ballX = 395, ballY = 195;
@@ -11,69 +13,76 @@ const gameHeight = 400, gameWidth = 800, paddleHeight = 80;
 
 // Key state tracking
 const keysPressed = {
-  w: false,
-  s: false,
-  ArrowUp: false,
-  ArrowDown: false
+    w: false,
+    s: false,
+    ArrowUp: false,
+    ArrowDown: false
 };
 
 // Game loop
 function update() {
-  // Update ball position
-  ballX += ballSpeedX;
-  ballY += ballSpeedY;
+    // Update ball position
+    ballX += ballSpeedX;
+    ballY += ballSpeedY;
 
-  // Ball collisions
-  handleCollisions();
-  
-  // Update paddles based on key states
-  updatePaddles();
+    handleCollisions();
+    updatePaddles();
+    
+    // Update DOM positions
+    $ball.css({ left: ballX, top: ballY });
+    $paddleLeft.css('top', paddleLeftY);
+    $paddleRight.css('top', paddleRightY);
 
-  // Render updates
-  ball.style.left = `${ballX}px`;
-  ball.style.top = `${ballY}px`;
-  paddleLeft.style.top = `${paddleLeftY}px`;
-  paddleRight.style.top = `${paddleRightY}px`;
-
-  requestAnimationFrame(update);
+    requestAnimationFrame(update);
 }
 
 function handleCollisions() {
-  // Wall collisions
-  if (ballY <= 0 || ballY >= gameHeight - 10) ballSpeedY *= -1;
-  
-  // Paddle collisions
-  if (ballX <= 20 && ballY >= paddleLeftY && ballY <= paddleLeftY + paddleHeight) ballSpeedX *= -1;
-  if (ballX >= gameWidth - 30 && ballY >= paddleRightY && ballY <= paddleRightY + paddleHeight) ballSpeedX *= -1;
-  
-  // Reset ball on score
-  if (ballX <= 0 || ballX >= gameWidth - 10) resetBall();
+    // Wall collisions
+    if (ballY <= 0 || ballY >= gameHeight - 10) ballSpeedY *= -1;
+    
+    // Paddle collisions
+    if (ballX <= 20 && ballY >= paddleLeftY && ballY <= paddleLeftY + paddleHeight) ballSpeedX *= -1;
+    if (ballX >= gameWidth - 30 && ballY >= paddleRightY && ballY <= paddleRightY + paddleHeight) ballSpeedX *= -1;
+    
+    // Reset ball
+    if (ballX <= 0 || ballX >= gameWidth - 10) resetBall();
 }
 
 function updatePaddles() {
-  // Left paddle movement
-  if (keysPressed.w && !keysPressed.s) paddleLeftY = Math.max(0, paddleLeftY - paddleSpeed);
-  if (keysPressed.s && !keysPressed.w) paddleLeftY = Math.min(gameHeight - paddleHeight, paddleLeftY + paddleSpeed);
+    // Left paddle
+    if (keysPressed.w && !keysPressed.s) {
+        paddleLeftY = Math.max(0, paddleLeftY - paddleSpeed);
+    }
+    if (keysPressed.s && !keysPressed.w) {
+        paddleLeftY = Math.min(gameHeight - paddleHeight, paddleLeftY + paddleSpeed);
+    }
 
-  // Right paddle movement
-  if (keysPressed.ArrowUp && !keysPressed.ArrowDown) paddleRightY = Math.max(0, paddleRightY - paddleSpeed);
-  if (keysPressed.ArrowDown && !keysPressed.ArrowUp) paddleRightY = Math.min(gameHeight - paddleHeight, paddleRightY + paddleSpeed);
+    // Right paddle
+    if (keysPressed.ArrowUp && !keysPressed.ArrowDown) {
+        paddleRightY = Math.max(0, paddleRightY - paddleSpeed);
+    }
+    if (keysPressed.ArrowDown && !keysPressed.ArrowUp) {
+        paddleRightY = Math.min(gameHeight - paddleHeight, paddleRightY + paddleSpeed);
+    }
 }
 
 function resetBall() {
-  ballX = gameWidth / 2 - 5;
-  ballY = gameHeight / 2 - 5;
-  ballSpeedX *= -1;
+    ballX = gameWidth / 2 - 5;
+    ballY = gameHeight / 2 - 5;
+    ballSpeedX *= -1;
 }
 
-// Event listeners
-document.addEventListener('keydown', (e) => {
-  if (e.key in keysPressed) keysPressed[e.key] = true;
+// Event handling
+$(document).on({
+    keydown: e => {
+        if (keysPressed.hasOwnProperty(e.key)) keysPressed[e.key] = true
+    },
+    keyup: e => {
+        if (keysPressed.hasOwnProperty(e.key)) keysPressed[e.key] = false
+    }
 });
 
-document.addEventListener('keyup', (e) => {
-  if (e.key in keysPressed) keysPressed[e.key] = false;
+// Initialize game
+$(document).ready(() => {
+    update();
 });
-
-// Start game
-update();
